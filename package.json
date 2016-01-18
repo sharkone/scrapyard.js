@@ -1,0 +1,26 @@
+{
+  "name": "scrapyard.js",
+  "version": "0.0.1",
+  "description": "Find magnet links for movies and TV shows.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sharkone/scrapyard.js.git"
+  },
+  "author": "Thomas Texier (@sharkone)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sharkone/scrapyard.js/issues"
+  },
+  "homepage": "https://github.com/sharkone/scrapyard.js#readme",
+  "dependencies": {
+    "async": "^1.5.2",
+    "express": "^4.13.3",
+    "merge": "^1.2.0",
+    "string": "^3.3.1",
+    "trakt-api": "^0.4.0"
+  }
+}

@@ -2,8 +2,9 @@ require('newrelic');
 
 // ----------------------------------------------------------------------------
 
-var app    = require('express')();
-var movies = require('./movies');
+var app        = require('express')();
+var bodyParser = require('body-parser');
+var movies     = require('./movies');
 
 // ----------------------------------------------------------------------------
 
@@ -12,6 +13,8 @@ var VERSION = '0.0.1';
 // ----------------------------------------------------------------------------
 
 app.set('json spaces', 2);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 var server = app.listen(process.env.PORT || 5000, process.env.IP || '0.0.0.0', function() {
   console.log('[scrapyard] Starting on %s:%s', server.address().address, server.address().port);
@@ -76,6 +79,19 @@ app.get('/api/movies/search', function(req, res) {
           res.json({ movies: movieInfos });
         }
       });
+    }
+  });
+});
+
+// ----------------------------------------------------------------------------
+
+app.post('/api/movies/watchlist', function(req, res) {
+  movies.getInfos(JSON.parse(req.body.movies_watchlist) || [], function(err, movieInfos) {
+    if (err) {
+      res.sendStatus(err['statusCode']);
+    }
+    else {
+      res.json({ movies: movieInfos });
     }
   });
 });

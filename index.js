@@ -35,7 +35,7 @@ app.get('/api/movies/trending', function(req, res) {
           res.sendStatus(err['statusCode']);
         }
         else {
-          res.json(movieInfos);
+          res.json({ movies: movieInfos });
         }
       });
     }
@@ -54,7 +54,7 @@ app.get('/api/movies/popular', function(req, res) {
           res.sendStatus(err['statusCode']);
         }
         else {
-          res.json(movieInfos);
+          res.json({ movies: movieInfos });
         }
       });
     }
@@ -73,7 +73,7 @@ app.get('/api/movies/search', function(req, res) {
           res.sendStatus(err['statusCode']);
         }
         else {
-          res.json(movieInfos);
+          res.json({ movies: movieInfos });
         }
       });
     }

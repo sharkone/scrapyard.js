@@ -1,3 +1,7 @@
+require('newrelic');
+
+// ----------------------------------------------------------------------------
+
 var app    = require('express')();
 var movies = require('./movies');
 
@@ -9,7 +13,7 @@ var VERSION = '0.0.1';
 
 app.set('json spaces', 2);
 
-var server = app.listen(process.env.PORT || 8080, process.env.IP || '0.0.0.0', function() {
+var server = app.listen(process.env.PORT || 5000, process.env.IP || '0.0.0.0', function() {
   console.log('[scrapyard] Starting on %s:%s', server.address().address, server.address().port);
 });
 

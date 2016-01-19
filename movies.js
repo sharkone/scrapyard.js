@@ -55,7 +55,7 @@ function getInfo(movie, callback) {
         tagline:        movieInfoData.tagline,
         thumb:          movieInfoData.images.poster.full,
         art:            movieInfoData.images.fanart.full,
-        runtime:        parseInt(movieInfoData.runtime, 10) * 60 * 1000,
+        runtime:        movieInfoData.runtime * 60 * 1000,
         genres:         movieInfoData.genres.map(function(x) { return S(x).capitalize().s; }),
         rating:         movieInfoData.rating,
         released:       movieInfoData.released,

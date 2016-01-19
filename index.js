@@ -5,6 +5,7 @@ require('newrelic');
 var app        = require('express')();
 var bodyParser = require('body-parser');
 var movies     = require('./movies');
+var shows      = require('./shows');
 
 // ----------------------------------------------------------------------------
 
@@ -36,8 +37,7 @@ app.get('/api/movies/trending', function(req, res) {
       movies.getInfos(movieList, function(err, movieInfos) {
         if (err) {
           res.sendStatus(err['statusCode']);
-        }
-        else {
+        } else {
           res.json({ movies: movieInfos });
         }
       });
@@ -55,8 +55,7 @@ app.get('/api/movies/popular', function(req, res) {
       movies.getInfos(movieList, function(err, movieInfos) {
         if (err) {
           res.sendStatus(err['statusCode']);
-        }
-        else {
+        } else {
           res.json({ movies: movieInfos });
         }
       });
@@ -74,8 +73,7 @@ app.get('/api/movies/search', function(req, res) {
       movies.getInfos(movieList, function(err, movieInfos) {
         if (err) {
           res.sendStatus(err['statusCode']);
-        }
-        else {
+        } else {
           res.json({ movies: movieInfos });
         }
       });
@@ -89,8 +87,7 @@ app.post('/api/movies/watchlist', function(req, res) {
   movies.getInfos(JSON.parse(req.body.movies_watchlist) || [], function(err, movieInfos) {
     if (err) {
       res.sendStatus(err['statusCode']);
-    }
-    else {
+    } else {
       res.json({ movies: movieInfos });
     }
   });
@@ -100,10 +97,89 @@ app.post('/api/movies/watchlist', function(req, res) {
 
 app.get('/api/movie/:trakt_slug', function(req, res) {
   movies.getInfo(req.params.trakt_slug, function(err, movieInfo) {
-    if (err)
+    if (err) {
       res.sendStatus(err['statusCode']);
-    else
+    } else {
       res.json(movieInfo);
+    }
+  });
+});
+
+// ----------------------------------------------------------------------------
+
+app.get('/api/shows/trending', function(req, res) {
+  shows.getTrending(parseInt(req.query.page, 10) || 1, 31, function(err, showList) {
+    if (err) {
+      res.sendStatus(err['statusCode']);
+    } else {
+      shows.getInfos(showList, function(err, showInfos) {
+        if (err) {
+          res.sendStatus(err['statusCode']);
+        } else {
+          res.json({ shows: showInfos });
+        }
+      });
+    }
+  });
+});
+
+// ----------------------------------------------------------------------------
+
+app.get('/api/shows/popular', function(req, res) {
+  shows.getPopular(parseInt(req.query.page, 10) || 1, 31, function(err, showList) {
+    if (err) {
+      res.sendStatus(err['statusCode']);
+    } else {
+      shows.getInfos(showList, function(err, showInfos) {
+        if (err) {
+          res.sendStatus(err['statusCode']);
+        } else {
+          res.json({ shows: showInfos });
+        }
+      });
+    }
+  });
+});
+
+// ----------------------------------------------------------------------------
+
+app.get('/api/shows/search', function(req, res) {
+  shows.search(req.query.query || '', function(err, showList) {
+    if (err) {
+      res.sendStatus(err['statusCode']);
+    } else {
+      shows.getInfos(showList, function(err, showInfos) {
+        if (err) {
+          res.sendStatus(err['statusCode']);
+        } else {
+          res.json({ shows: showInfos });
+        }
+      });
+    }
+  });
+});
+
+// ----------------------------------------------------------------------------
+
+app.post('/api/shows/favorites', function(req, res) {
+  shows.getInfos(JSON.parse(req.body.shows_favorites) || [], function(err, showInfos) {
+    if (err) {
+      res.sendStatus(err['statusCode']);
+    } else {
+      res.json({ shows: showInfos });
+    }
+  });
+});
+
+// ----------------------------------------------------------------------------
+
+app.get('/api/show/:trakt_slug', function(req, res) {
+  shows.getInfo(req.params.trakt_slug, function(err, showInfo) {
+    if (err) {
+      res.sendStatus(err['statusCode']);
+    } else {
+      res.json(showInfo);
+    }
   });
 });
 

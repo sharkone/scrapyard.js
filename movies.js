@@ -71,16 +71,16 @@ function getInfo(movie, callback) {
 
 // ----------------------------------------------------------------------------
 
-function getTorrents(movieInfo, callback) {
-  kickass.movie(movieInfo, function(err, torrents) {
+function getMagnets(movieInfo, callback) {
+  kickass.movie(movieInfo, function(err, movieMagnetData) {
     if (err) {
       callback(err, null);
     } else {
-      var movieTorrents = {
-        torrents: torrents
+      var movieMagnets = {
+        magnets: movieMagnetData
       };
 
-      callback(null, movieTorrents);
+      callback(null, movieMagnets);
     }
   });
 }
@@ -162,11 +162,11 @@ exports.getInfo = function(movie, callback) {
           } else {
             movieInfoFull = merge(movieInfoFull, movieInfo);
 
-            getTorrents(movieInfoFull, function(err, movieTorrents) {
+            getMagnets(movieInfoFull, function(err, movieMagnets) {
               if (err) {
                 callback(err, null);
               } else {
-                movieInfoFull = merge(movieInfoFull, movieTorrents);
+                movieInfoFull = merge(movieInfoFull, movieMagnets);
                 callback(null, null);
               }
             });

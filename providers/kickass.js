@@ -1,9 +1,10 @@
 var async   = require('async');
 var kickass = require('kickass-torrent');
+var magnet  = require('magnet-uri');
 var util    = require('util');
 
 function search(query, callback) {
-  var torrents = [];
+  var magnets = [];
 
   kickass({ q: query, field: 'seeder', order: 'desc' }, function(err, data) {
     if (err) {
@@ -12,16 +13,26 @@ function search(query, callback) {
     }
 
     for (var i = 0; i < data.list.length; i++) {
-      torrents.push({
+      var magnetInfo = {
         title: data.list[i].title,
-        hash:  data.list[i].hash,
         size:  data.list[i].size,
-        // seeds: data.list[i].seeds,
-        // peers: data.list[i].leechs
+        seeds: data.list[i].seeds,
+        peers: data.list[i].leechs
+      };
+
+      magnetInfo.link = magnet.encode({
+        dn: magnetInfo.title,
+        xt: [ 'urn:btih:' + data.list[i].hash ],
+        tr: [ 'udp://tracker.openbittorrent.com:80',
+              'udp://open.demonii.com:1337',
+              'udp://tracker.leechers-paradise.org:6969'
+            ]
       });
+
+      magnets.push(magnetInfo);
     }
 
-    callback(null, torrents);
+    callback(null, magnets);
   });
 }
 

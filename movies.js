@@ -3,6 +3,8 @@ var merge = require('merge');
 var trakt = require('trakt-api')('64cf92c702ff753cc14a6d421824efcd32f22058f79bf6d637fa92e23229f35f', { logLevel: 'info'});
 var S     = require('string');
 
+var kickass = require('./providers/kickass.js');
+
 // ----------------------------------------------------------------------------
 
 exports.getTrending = function(page, limit, callback) {
@@ -63,6 +65,22 @@ function getInfo(movie, callback) {
       };
 
       callback(null, movieInfo);
+    }
+  });
+}
+
+// ----------------------------------------------------------------------------
+
+function getTorrents(movieInfo, callback) {
+  kickass.movie(movieInfo, function(err, torrents) {
+    if (err) {
+      callback(err, null);
+    } else {
+      var movieTorrents = {
+        torrents: torrents
+      };
+
+      callback(null, movieTorrents);
     }
   });
 }
@@ -143,16 +161,24 @@ exports.getInfo = function(movie, callback) {
             callback(err, null);
           } else {
             movieInfoFull = merge(movieInfoFull, movieInfo);
-            callback(null, null);
+
+            getTorrents(movieInfoFull, function(err, movieTorrents) {
+              if (err) {
+                callback(err, null);
+              } else {
+                movieInfoFull = merge(movieInfoFull, movieTorrents);
+                callback(null, null);
+              }
+            });
           }
         });
       },
       function(callback) {
-        getPeople(movie, function(err, moviePeopleInfo) {
+        getPeople(movie, function(err, moviePeople) {
           if (err) {
             callback(err, null);
           } else {
-            movieInfoFull = merge(movieInfoFull, moviePeopleInfo);
+            movieInfoFull = merge(movieInfoFull, moviePeople);
             callback(null, null);
           }
         });

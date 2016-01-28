@@ -95,14 +95,21 @@ app.post('/api/movies/watchlist', function(req, res) {
 
 // ----------------------------------------------------------------------------
 
+moviesCache = {};
+
 app.get('/api/movie/:trakt_slug', function(req, res) {
-  movies.getInfo(req.params.trakt_slug, function(err, movieInfo) {
-    if (err) {
-      res.sendStatus(err['statusCode']);
-    } else {
-      res.json(movieInfo);
-    }
-  });
+  if (req.params.trakt_slug in moviesCache) {
+    res.json(moviesCache[req.params.trakt_slug]);
+  } else {
+    movies.getInfo(req.params.trakt_slug, function(err, movieInfo) {
+      if (err) {
+        res.sendStatus(err['statusCode']);
+      } else {
+        moviesCache[req.params.trakt_slug] = movieInfo;
+        res.json(movieInfo);
+      }
+    });
+  }
 });
 
 // ----------------------------------------------------------------------------

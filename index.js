@@ -1,9 +1,8 @@
 require('newrelic');
 
-// ----------------------------------------------------------------------------
-
 var app        = require('express')();
 var bodyParser = require('body-parser');
+
 var movies     = require('./movies');
 var shows      = require('./shows');
 
@@ -95,21 +94,14 @@ app.post('/api/movies/watchlist', function(req, res) {
 
 // ----------------------------------------------------------------------------
 
-moviesCache = {};
-
 app.get('/api/movie/:trakt_slug', function(req, res) {
-  if (req.params.trakt_slug in moviesCache) {
-    res.json(moviesCache[req.params.trakt_slug]);
-  } else {
-    movies.getInfo(req.params.trakt_slug, function(err, movieInfo) {
-      if (err) {
-        res.sendStatus(err['statusCode']);
-      } else {
-        moviesCache[req.params.trakt_slug] = movieInfo;
-        res.json(movieInfo);
-      }
-    });
-  }
+  movies.getInfo(req.params.trakt_slug, function(err, movieInfo) {
+    if (err) {
+      res.sendStatus(err['statusCode']);
+    } else {
+      res.json(movieInfo);
+    }
+  });
 });
 
 // ----------------------------------------------------------------------------

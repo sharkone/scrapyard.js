@@ -21,6 +21,7 @@
     "bittorrent-tracker": "^7.0.1",
     "body-parser": "^1.14.2",
     "express": "^4.13.3",
+    "lru-cache": "^4.0.0",
     "magnet-uri": "^5.1.2",
     "merge": "^1.2.0",
     "newrelic": "^1.24.1",

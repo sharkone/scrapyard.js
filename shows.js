@@ -7,7 +7,7 @@ var trakt = require('./trakt');
 // ----------------------------------------------------------------------------
 
 exports.getTrending = function(page, limit, callback) {
-  trakt.showsPopular(page, limit, function(err, shows) {
+  trakt.showsTrending(page, limit, function(err, shows) {
     if (err) {
       callback(err, null);
     } else {
@@ -43,7 +43,7 @@ exports.search = function(query, callback) {
 // ----------------------------------------------------------------------------
 
 function getInfo(show, callback) {
-  trakt.show(show, { extended: 'full,images' }, function(err, showInfoData) {
+  trakt.show(show, function(err, showInfoData) {
     if (err) {
       callback(err, null);
     } else {
@@ -71,7 +71,7 @@ function getInfo(show, callback) {
 // ----------------------------------------------------------------------------
 
 function getSeasons(show, callback) {
-  trakt.showSeasons(show, { extended: 'full,images' }, function(err, showSeasonInfoData) {
+  trakt.showSeasons(show, function(err, showSeasonInfoData) {
     if (err) {
       callback(err, null);
     } else {

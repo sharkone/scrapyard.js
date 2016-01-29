@@ -68,6 +68,6 @@ exports.showsSearch = function(query, callback) {
 
 // ----------------------------------------------------------------------------
 
-exports.movie = function(slug, callback) {
-  trakt('/movies/' + slug, { extended: 'full,images' }, callback);
+exports.show = function(slug, callback) {
+  trakt('/shows/' + slug, { extended: 'full,images' }, callback);
 }

@@ -1,14 +1,15 @@
 var async = require('async');
 var merge = require('merge');
-var trakt = require('trakt-api')('64cf92c702ff753cc14a6d421824efcd32f22058f79bf6d637fa92e23229f35f', { logLevel: 'info'});
 var S     = require('string');
+
+var trakt = require('./trakt');
 
 var kickass = require('./providers/kickass.js');
 
 // ----------------------------------------------------------------------------
 
 exports.getTrending = function(page, limit, callback) {
-  trakt.movieTrending({ page: page, limit: limit }, function(err, movies) {
+  trakt.moviesTrending(page, limit, function(err, movies) {
     if (err) {
       callback(err, null);
     } else {
@@ -20,7 +21,7 @@ exports.getTrending = function(page, limit, callback) {
 // ----------------------------------------------------------------------------
 
 exports.getPopular = function(page, limit, callback) {
-  trakt.moviePopular({ page: page, limit: limit }, function(err, movies) {
+  trakt.moviesPopular(page, limit, function(err, movies) {
     if (err) {
       callback(err, null);
     } else {
@@ -32,7 +33,7 @@ exports.getPopular = function(page, limit, callback) {
 // ----------------------------------------------------------------------------
 
 exports.search = function(query, callback) {
-  trakt.searchMovie(query, function(err, movies) {
+  trakt.moviesSearch(query, function(err, movies) {
     if (err) {
       callback(err, null);
     } else {
@@ -44,7 +45,7 @@ exports.search = function(query, callback) {
 // ----------------------------------------------------------------------------
 
 function getInfo(movie, callback) {
-  trakt.movie(movie, { extended: 'full,images' }, function(err, movieInfoData) {
+  trakt.movie(movie, function(err, movieInfoData) {
     if (err) {
       callback(err, null);
     } else {
@@ -88,7 +89,7 @@ function getMagnets(movieInfo, callback) {
 // ----------------------------------------------------------------------------
 
 function getPeople(movie, callback) {
-  trakt.moviePeople(movie, { extended: 'images' }, function(err, moviePeopleData) {
+  trakt.moviePeople(movie, function(err, moviePeopleData) {
     if (err) {
       callback(err, null);
     } else {

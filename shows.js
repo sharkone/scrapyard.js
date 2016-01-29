@@ -1,12 +1,13 @@
 var async = require('async');
 var merge = require('merge');
-var trakt = require('trakt-api')('64cf92c702ff753cc14a6d421824efcd32f22058f79bf6d637fa92e23229f35f', { logLevel: 'info'});
 var S     = require('string');
+
+var trakt = require('./trakt');
 
 // ----------------------------------------------------------------------------
 
 exports.getTrending = function(page, limit, callback) {
-  trakt.showTrending({ page: page, limit: limit }, function(err, shows) {
+  trakt.showsPopular(page, limit, function(err, shows) {
     if (err) {
       callback(err, null);
     } else {
@@ -18,7 +19,7 @@ exports.getTrending = function(page, limit, callback) {
 // ----------------------------------------------------------------------------
 
 exports.getPopular = function(page, limit, callback) {
-  trakt.showPopular({ page: page, limit: limit }, function(err, shows) {
+  trakt.showsPopular(page, limit, function(err, shows) {
     if (err) {
       callback(err, null);
     } else {
@@ -30,7 +31,7 @@ exports.getPopular = function(page, limit, callback) {
 // ----------------------------------------------------------------------------
 
 exports.search = function(query, callback) {
-  trakt.searchShow(query, function(err, shows) {
+  trakt.showsSearch(query, function(err, shows) {
     if (err) {
       callback(err, null);
     } else {

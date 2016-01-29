@@ -1,6 +1,9 @@
 {
   "name": "scrapyard.js",
   "version": "0.0.1",
+  "engines": {
+    "node": "5.5.5"
+  },
   "description": "Find magnet links for movies and TV shows.",
   "main": "index.js",
   "scripts": {

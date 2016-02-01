@@ -57,7 +57,15 @@ exports.episode = function(showInfo, seasonIndex, episodeIndex, callback) {
         search('tv', util.format('%s season:%d episode:%d', showInfo.title, seasonIndex, episodeIndex), callback);
       },
       function(callback) {
-        search('tv', util.format('%s S:%02dE:%02d', showInfo.title, seasonIndex, episodeIndex), callback);
+        var season = seasonIndex.toString();
+        if (seasonIndex < 10) {
+          season = '0' + season;
+        }
+        var episode = episodeIndex.toString();
+        if (episodeIndex < 10) {
+          episode = '0' + episode;
+        }
+        search('tv', util.format('%s S%sE%s', showInfo.title, season, episode), callback);
       }
     ],
     function(err, results) {

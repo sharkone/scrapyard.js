@@ -1,6 +1,7 @@
 var LRU         = require('lru-cache')
 var querystring = require('querystring');
 var request     = require('request');
+var zlib        = require('zlib');
 
 var cache = new LRU();
 
@@ -27,7 +28,7 @@ exports.http = function(url, params, headers, timeout, callback) {
   var value = cache.get(key);
   if (value) {
     console.log('[HTTP][MEM][' + getDuration(startTime) + 's] ' + getFullURL(url, params));
-    callback(null, value);
+    callback(null, zlib.gunzipSync(value).toString());
   } else {
     var options = {
       gzip:     true,
@@ -44,7 +45,7 @@ exports.http = function(url, params, headers, timeout, callback) {
         callback(err, null);
       } else {
         console.log('[HTTP][NET][' + getDuration(startTime) + 's] ' + getFullURL(url, params));
-        cache.set(key, body);
+        cache.set(key, zlib.gzipSync(body));
         callback(null, body);
       }
     });

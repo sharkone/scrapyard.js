@@ -81,18 +81,21 @@ exports.episode = function(showInfo, seasonIndex, episodeIndex, callback) {
 
 function mergeMagnetLists(list1, list2) {
   var toAdd = [];
-  for (var i = 0; i < list2.length; i++) {
-    var alreadyAdded = false;
 
-    for (var j = 0; j < list1.length; j++) {
-      if (list2[i].link == list1[j].link) {
-        alreadyAdded = true;
-        break;
+  if (list2) {
+    for (var i = 0; i < list2.length; i++) {
+      var alreadyAdded = false;
+
+      for (var j = 0; j < list1.length; j++) {
+        if (list2[i].link == list1[j].link) {
+          alreadyAdded = true;
+          break;
+        }
       }
-    }
 
-    if (!alreadyAdded) {
-      toAdd.push(list2[i]);
+      if (!alreadyAdded) {
+        toAdd.push(list2[i]);
+      }
     }
   }
 

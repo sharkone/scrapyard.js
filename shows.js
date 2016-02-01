@@ -4,6 +4,8 @@ var S     = require('string');
 
 var trakt = require('./trakt');
 
+var kickass = require('./providers/kickass.js');
+
 // ----------------------------------------------------------------------------
 
 function getInfo(show, callback) {
@@ -56,6 +58,71 @@ function getSeasons(show, callback) {
       }
 
       callback(null, showSeasonInfo);
+    }
+  });
+}
+
+// ----------------------------------------------------------------------------
+
+function getSeason(show, seasonIndex, callback) {
+  getInfo(show, function(err, showInfo) {
+    if (err) {
+      callback(err, null);
+    } else {
+      trakt.showSeason(show, seasonIndex, function(err, showSeasonInfoData) {
+        if (err) {
+          callback(err, null);
+        } else {
+          var showSeasonInfo = [];
+          for (var i = 0; i < showSeasonInfoData.length; i++) {
+            if (showSeasonInfoData[i].first_aired) {
+              showSeasonInfo.push({
+                show_title:     showInfo.title,
+                season_index:   showSeasonInfoData[i].season,
+                episode_index:  showSeasonInfoData[i].number,
+                title:          showSeasonInfoData[i].title,
+                thumb:          showSeasonInfoData[i].images.screenshot.full,
+                art:            showSeasonInfoData[i].images.screenshot.full,
+                overview:       showSeasonInfoData[i].overview,
+                rating:         showSeasonInfoData[i].rating,
+                first_aired:    showSeasonInfoData[i].first_aired,
+              });
+            }
+          }
+
+          callback(null, showSeasonInfo);
+        }
+      });
+    }
+  });
+}
+
+// ----------------------------------------------------------------------------
+
+function getEpisode(show, seasonIndex, episodeIndex, callback) {
+  getSeason(show, seasonIndex, function(err, seasonInfo) {
+    if (err) {
+      callback(err, null);
+    } else {
+      for (var i = 0; i < seasonInfo.length; i++) {
+        if (seasonInfo[i].episode_index == episodeIndex) {
+          callback(null, seasonInfo[i]);
+          return;
+        }
+      }
+      callback('Invalid episode index', null);
+    }
+  });
+}
+
+// ----------------------------------------------------------------------------
+
+function getMagnets(showInfo, seasonIndex, episodeIndex, callback) {
+  kickass.episode(showInfo, seasonIndex, episodeIndex, function(err, episodeMagnetData) {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, { magnets: episodeMagnetData });
     }
   });
 }
@@ -147,24 +214,49 @@ exports.getInfo = function(show, callback) {
 // ----------------------------------------------------------------------------
 
 exports.getSeason = function(show, seasonIndex, callback) {
-  trakt.showSeason(show, seasonIndex, function(err, showSeasonInfoData) {
-    if (err) {
-      callback(err, null);
-    } else {
-      var showSeasonInfo = [];
-      for (var i = 0; i < showSeasonInfoData.length; i++) {
-        showSeasonInfo.push({
-          season_index:   showSeasonInfoData[i].season,
-          episode_index:  showSeasonInfoData[i].number,
-          title:          showSeasonInfoData[i].title,
-          thumb:          showSeasonInfoData[i].images.screenshot.full,
-          art:            showSeasonInfoData[i].images.screenshot.full,
-          overview:       showSeasonInfoData[i].overview,
-          rating:         showSeasonInfoData[i].rating,
-          first_aired:    showSeasonInfoData[i].first_aired,
+  getSeason(show, seasonIndex, callback);
+}
+
+// ----------------------------------------------------------------------------
+
+exports.getEpisode = function(show, seasonIndex, episodeIndex, callback) {
+  var episodeInfoFull = {};
+
+  async.parallel(
+    [
+      function(callback) {
+        getEpisode(show, seasonIndex, episodeIndex, function(err, episodeInfo) {
+          if (err) {
+            callback(err, null);
+          } else {
+            episodeInfoFull = merge(episodeInfoFull, episodeInfo);
+            callback(null, null);
+          }
+        });
+      },
+      function(callback) {
+        getInfo(show, function(err, showInfo) {
+          if (err) {
+            callback(err, null);
+          } else {
+            getMagnets(showInfo, seasonIndex, episodeIndex, function(err, episodeMagnets) {
+              if (err) {
+                callback(err, null);
+              } else {
+                episodeInfoFull = merge(episodeInfoFull, episodeMagnets);
+                callback(null, null);
+              }
+            });
+          }
         });
       }
-      callback(null, showSeasonInfo);
+    ],
+    function(err, results) {
+      if (err) {
+        callback(err, null);
+      } else {
+        callback(null, episodeInfoFull);
+      }
     }
-  });
+  );
 }

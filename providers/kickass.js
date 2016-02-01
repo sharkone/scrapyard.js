@@ -48,16 +48,20 @@ exports.movie = function(movieInfo, callback) {
   search('movies', 'imdb:' + ((movieInfo.imdb_id != null) ? movieInfo.imdb_id.substring(2) : ''), callback);
 }
 
-// exports.episode = function(showInfo, episodeInfo, callback) {
-//   async.parallel([
-//     function(callback) {
-//       search(util.format('category:tv season:%d episode:%d', episodeInfo.season_index, episodeInfo.episode_index), callback);
-//     },
-//     function(callback) {
-//       search(util.format('category:tv S:%02dE:%02d', episodeInfo.season_index, episodeInfo.episode_index), callback);
-//     }],
-//     function(err, results) {
-//       callback(null, results[0].concat(results[1]));
-//     }
-//   );
-// }
+// ----------------------------------------------------------------------------
+
+exports.episode = function(showInfo, seasonIndex, episodeIndex, callback) {
+  async.parallel(
+    [
+      function(callback) {
+        search('tv', util.format('%s season:%d episode:%d', showInfo.title, seasonIndex, episodeIndex), callback);
+      },
+      function(callback) {
+        search('tv', util.format('%s S:%02dE:%02d', showInfo.title, seasonIndex, episodeIndex), callback);
+      }
+    ],
+    function(err, results) {
+      callback(null, results[0].concat(results[1]));
+    }
+  );
+}

@@ -77,11 +77,7 @@ function getMagnets(movieInfo, callback) {
     if (err) {
       callback(err, null);
     } else {
-      var movieMagnets = {
-        magnets: movieMagnetData
-      };
-
-      callback(null, movieMagnets);
+      callback(null, { magnets: movieMagnetData });
     }
   });
 }

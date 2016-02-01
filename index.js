@@ -193,3 +193,15 @@ app.get('/api/show/:trakt_slug/season/:season_index', function(req, res) {
     }
   });
 });
+
+// ----------------------------------------------------------------------------
+
+app.get('/api/show/:trakt_slug/season/:season_index/episode/:episode_index', function(req, res) {
+  shows.getEpisode(req.params.trakt_slug, parseInt(req.params.season_index, 10) || 1, parseInt(req.params.episode_index, 10) || 1, function(err, episodeInfo) {
+    if (err) {
+      res.sendStatus(err['statusCode']);
+    } else {
+      res.json(episodeInfo);
+    }
+  });
+});

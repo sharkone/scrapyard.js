@@ -45,7 +45,10 @@ function search(category, query, callback) {
 // ----------------------------------------------------------------------------
 
 exports.movie = function(movieInfo, callback) {
-  search('movies', 'imdb:' + ((movieInfo.imdb_id != null) ? movieInfo.imdb_id.substring(2) : ''), callback);
+  search('movies', 'imdb:' + ((movieInfo.imdb_id != null) ? movieInfo.imdb_id.substring(2) : ''), function(err, movieMagnets) {
+    movieMagnets.sort(function(a, b) { return b.seeds - a.seeds; });
+    callback(null, movieMagnets);
+  });
 }
 
 // ----------------------------------------------------------------------------
@@ -69,7 +72,29 @@ exports.episode = function(showInfo, seasonIndex, episodeIndex, callback) {
       }
     ],
     function(err, results) {
-      callback(null, results[0].concat(results[1]));
+      episodeMagnets = mergeMagnetLists(results[0], results[1]);
+      episodeMagnets.sort(function(a, b) { return b.seeds - a.seeds; });
+      callback(null, episodeMagnets);
     }
   );
+}
+
+function mergeMagnetLists(list1, list2) {
+  var toAdd = [];
+  for (var i = 0; i < list2.length; i++) {
+    var alreadyAdded = false;
+
+    for (var j = 0; j < list1.length; j++) {
+      if (list2[i].link == list1[j].link) {
+        alreadyAdded = true;
+        break;
+      }
+    }
+
+    if (!alreadyAdded) {
+      toAdd.push(list2[i]);
+    }
+  }
+
+  return list1.concat(toAdd);
 }

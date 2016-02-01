@@ -6,42 +6,6 @@ var trakt = require('./trakt');
 
 // ----------------------------------------------------------------------------
 
-exports.getTrending = function(page, limit, callback) {
-  trakt.showsTrending(page, limit, function(err, shows) {
-    if (err) {
-      callback(err, null);
-    } else {
-      callback(null, shows.map(function(show) { return show.show.ids.slug; }));
-    }
-  });
-}
-
-// ----------------------------------------------------------------------------
-
-exports.getPopular = function(page, limit, callback) {
-  trakt.showsPopular(page, limit, function(err, shows) {
-    if (err) {
-      callback(err, null);
-    } else {
-      callback(null, shows.map(function(show) { return show.ids.slug; }));
-    }
-  });
-}
-
-// ----------------------------------------------------------------------------
-
-exports.search = function(query, callback) {
-  trakt.showsSearch(query, function(err, shows) {
-    if (err) {
-      callback(err, null);
-    } else {
-      callback(null, shows.map(function(show) { return show.show.ids.slug; }));
-    }
-  });
-}
-
-// ----------------------------------------------------------------------------
-
 function getInfo(show, callback) {
   trakt.show(show, function(err, showInfoData) {
     if (err) {
@@ -96,68 +60,47 @@ function getSeasons(show, callback) {
   });
 }
 
-// // ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 
-// function getPeople(movie, callback) {
-//   trakt.moviePeople(movie, { extended: 'images' }, function(err, moviePeopleData) {
-//     if (err) {
-//       callback(err, null);
-//     } else {
-//       var moviePeople = {
-//         cast: [],
-//         crew: {
-//           directing:  [],
-//           production: [],
-//           writing:    []
-//         }
-//       };
+exports.getTrending = function(page, limit, callback) {
+  trakt.showsTrending(page, limit, function(err, shows) {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, shows.map(function(show) { return show.show.ids.slug; }));
+    }
+  });
+}
 
-//       if ('cast' in moviePeopleData) {
-//         for (var i = 0; i < moviePeopleData.cast.length; i++) {
-//           moviePeople.cast.push({
-//             name:       moviePeopleData.cast[i].person.name,
-//             headshot:   moviePeopleData.cast[i].person.images.headshot.full,
-//             character:  moviePeopleData.cast[i].character
-//           });
-//         }
-//       }
+// ----------------------------------------------------------------------------
 
-//       if ('crew' in moviePeopleData) {
-//         if ('directing' in moviePeopleData.crew) {
-//           for (var i = 0; i < moviePeopleData.crew.directing.length; i++) {
-//             moviePeople.crew.directing.push({
-//               name:     moviePeopleData.crew.directing[i].person.name,
-//               headshot: moviePeopleData.crew.directing[i].person.images.headshot.full,
-//               job:      moviePeopleData.crew.directing[i].job
-//             });
-//           }
-//         }
+exports.getPopular = function(page, limit, callback) {
+  trakt.showsPopular(page, limit, function(err, shows) {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, shows.map(function(show) { return show.ids.slug; }));
+    }
+  });
+}
 
-//         if ('production' in moviePeopleData.crew) {
-//           for (var i = 0; i < moviePeopleData.crew.production.length; i++) {
-//             moviePeople.crew.production.push({
-//               name:     moviePeopleData.crew.production[i].person.name,
-//               headshot: moviePeopleData.crew.production[i].person.images.headshot.full,
-//               job:      moviePeopleData.crew.production[i].job
-//             });
-//           }
-//         }
+// ----------------------------------------------------------------------------
 
-//         if ('writing' in moviePeopleData.crew) {
-//           for (var i = 0; i < moviePeopleData.crew.writing.length; i++) {
-//             moviePeople.crew.writing.push({
-//               name:     moviePeopleData.crew.writing[i].person.name,
-//               headshot: moviePeopleData.crew.writing[i].person.images.headshot.full,
-//               job:      moviePeopleData.crew.writing[i].job
-//             });
-//           }
-//         }
-//       }
+exports.search = function(query, callback) {
+  trakt.showsSearch(query, function(err, shows) {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, shows.map(function(show) { return show.show.ids.slug; }));
+    }
+  });
+}
 
-//       callback(null, moviePeople);
-//     }
-//   });
-// }
+// ----------------------------------------------------------------------------
+
+exports.getInfos = function(showList, callback) {
+  async.map(showList, getInfo, callback);
+}
 
 // ----------------------------------------------------------------------------
 
@@ -203,6 +146,25 @@ exports.getInfo = function(show, callback) {
 
 // ----------------------------------------------------------------------------
 
-exports.getInfos = function(showList, callback) {
-  async.map(showList, getInfo, callback);
+exports.getSeason = function(show, seasonIndex, callback) {
+  trakt.showSeason(show, seasonIndex, function(err, showSeasonInfoData) {
+    if (err) {
+      callback(err, null);
+    } else {
+      var showSeasonInfo = [];
+      for (var i = 0; i < showSeasonInfoData.length; i++) {
+        showSeasonInfo.push({
+          season_index:   showSeasonInfoData[i].season,
+          episode_index:  showSeasonInfoData[i].number,
+          title:          showSeasonInfoData[i].title,
+          thumb:          showSeasonInfoData[i].images.screenshot.full,
+          art:            showSeasonInfoData[i].images.screenshot.full,
+          overview:       showSeasonInfoData[i].overview,
+          rating:         showSeasonInfoData[i].rating,
+          first_aired:    showSeasonInfoData[i].first_aired,
+        });
+      }
+      callback(null, showSeasonInfo);
+    }
+  });
 }

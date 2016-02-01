@@ -70,3 +70,15 @@ exports.showsSearch = function(query, callback) {
 exports.show = function(slug, callback) {
   trakt('/shows/' + slug, { extended: 'full,images' }, callback);
 }
+
+// ----------------------------------------------------------------------------
+
+exports.showSeasons = function(slug, callback) {
+  trakt('/shows/' + slug + '/seasons', { extended: 'full,images' }, callback);
+}
+
+// ----------------------------------------------------------------------------
+
+exports.showSeason = function(slug, seasonIndex, callback) {
+  trakt('/shows/' + slug + '/seasons/' + seasonIndex, { extended: 'full,images' }, callback);
+}

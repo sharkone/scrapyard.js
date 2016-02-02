@@ -31,11 +31,11 @@ app.get('/', function(req, res) {
 app.get('/api/movies/trending', function(req, res) {
   movies.getTrending(parseInt(req.query.page, 10) || 1, 31, function(err, movieList) {
     if (err) {
-      res.sendStatus(err['statusCode']);
+      res.status(('statusCode' in err) ? err['statusCode'] : 500).send(err);
     } else {
       movies.getInfos(movieList, function(err, movieInfos) {
         if (err) {
-          res.sendStatus(err['statusCode']);
+          res.status(('statusCode' in err) ? err['statusCode'] : 500).send(err);
         } else {
           res.json({ movies: movieInfos });
         }
@@ -49,11 +49,11 @@ app.get('/api/movies/trending', function(req, res) {
 app.get('/api/movies/popular', function(req, res) {
   movies.getPopular(parseInt(req.query.page, 10) || 1, 31, function(err, movieList) {
     if (err) {
-      res.sendStatus(err['statusCode']);
+      res.status(('statusCode' in err) ? err['statusCode'] : 500).send(err);
     } else {
       movies.getInfos(movieList, function(err, movieInfos) {
         if (err) {
-          res.sendStatus(err['statusCode']);
+          res.status(('statusCode' in err) ? err['statusCode'] : 500).send(err);
         } else {
           res.json({ movies: movieInfos });
         }
@@ -67,11 +67,11 @@ app.get('/api/movies/popular', function(req, res) {
 app.get('/api/movies/search', function(req, res) {
   movies.search(req.query.query || '', function(err, movieList) {
     if (err) {
-      res.sendStatus(err['statusCode']);
+      res.status(('statusCode' in err) ? err['statusCode'] : 500).send(err);
     } else {
       movies.getInfos(movieList, function(err, movieInfos) {
         if (err) {
-          res.sendStatus(err['statusCode']);
+          res.status(('statusCode' in err) ? err['statusCode'] : 500).send(err);
         } else {
           res.json({ movies: movieInfos });
         }
@@ -85,7 +85,7 @@ app.get('/api/movies/search', function(req, res) {
 app.post('/api/movies/watchlist', function(req, res) {
   movies.getInfos(JSON.parse(req.body.movies_watchlist) || [], function(err, movieInfos) {
     if (err) {
-      res.sendStatus(err['statusCode']);
+      res.status(('statusCode' in err) ? err['statusCode'] : 500).send(err);
     } else {
       res.json({ movies: movieInfos });
     }
@@ -97,7 +97,7 @@ app.post('/api/movies/watchlist', function(req, res) {
 app.get('/api/movie/:trakt_slug', function(req, res) {
   movies.getInfo(req.params.trakt_slug, function(err, movieInfo) {
     if (err) {
-      res.sendStatus(err['statusCode']);
+      res.status(('statusCode' in err) ? err['statusCode'] : 500).send(err);
     } else {
       res.json(movieInfo);
     }
@@ -109,11 +109,11 @@ app.get('/api/movie/:trakt_slug', function(req, res) {
 app.get('/api/shows/trending', function(req, res) {
   shows.getTrending(parseInt(req.query.page, 10) || 1, 31, function(err, showList) {
     if (err) {
-      res.sendStatus(err['statusCode']);
+      res.status(('statusCode' in err) ? err['statusCode'] : 500).send(err);
     } else {
       shows.getInfos(showList, function(err, showInfos) {
         if (err) {
-          res.sendStatus(err['statusCode']);
+          res.status(('statusCode' in err) ? err['statusCode'] : 500).send(err);
         } else {
           res.json({ shows: showInfos });
         }
@@ -127,11 +127,11 @@ app.get('/api/shows/trending', function(req, res) {
 app.get('/api/shows/popular', function(req, res) {
   shows.getPopular(parseInt(req.query.page, 10) || 1, 31, function(err, showList) {
     if (err) {
-      res.sendStatus(err['statusCode']);
+      res.status(('statusCode' in err) ? err['statusCode'] : 500).send(err);
     } else {
       shows.getInfos(showList, function(err, showInfos) {
         if (err) {
-          res.sendStatus(err['statusCode']);
+          res.status(('statusCode' in err) ? err['statusCode'] : 500).send(err);
         } else {
           res.json({ shows: showInfos });
         }
@@ -145,11 +145,11 @@ app.get('/api/shows/popular', function(req, res) {
 app.get('/api/shows/search', function(req, res) {
   shows.search(req.query.query || '', function(err, showList) {
     if (err) {
-      res.sendStatus(err['statusCode']);
+      res.status(('statusCode' in err) ? err['statusCode'] : 500).send(err);
     } else {
       shows.getInfos(showList, function(err, showInfos) {
         if (err) {
-          res.sendStatus(err['statusCode']);
+          res.status(('statusCode' in err) ? err['statusCode'] : 500).send(err);
         } else {
           res.json({ shows: showInfos });
         }
@@ -163,7 +163,7 @@ app.get('/api/shows/search', function(req, res) {
 app.post('/api/shows/favorites', function(req, res) {
   shows.getInfos(JSON.parse(req.body.shows_favorites) || [], function(err, showInfos) {
     if (err) {
-      res.sendStatus(err['statusCode']);
+      res.status(('statusCode' in err) ? err['statusCode'] : 500).send(err);
     } else {
       res.json({ shows: showInfos });
     }
@@ -175,7 +175,7 @@ app.post('/api/shows/favorites', function(req, res) {
 app.get('/api/show/:trakt_slug', function(req, res) {
   shows.getInfo(req.params.trakt_slug, function(err, showInfo) {
     if (err) {
-      res.sendStatus(err['statusCode']);
+      res.status(('statusCode' in err) ? err['statusCode'] : 500).send(err);
     } else {
       res.json(showInfo);
     }
@@ -187,7 +187,7 @@ app.get('/api/show/:trakt_slug', function(req, res) {
 app.get('/api/show/:trakt_slug/season/:season_index', function(req, res) {
   shows.getSeason(req.params.trakt_slug, parseInt(req.params.season_index, 10) || 1, function(err, seasonInfo) {
     if (err) {
-      res.sendStatus(err['statusCode']);
+      res.status(('statusCode' in err) ? err['statusCode'] : 500).send(err);
     } else {
       res.json({ episodes: seasonInfo });
     }
@@ -199,7 +199,7 @@ app.get('/api/show/:trakt_slug/season/:season_index', function(req, res) {
 app.get('/api/show/:trakt_slug/season/:season_index/episode/:episode_index', function(req, res) {
   shows.getEpisode(req.params.trakt_slug, parseInt(req.params.season_index, 10) || 1, parseInt(req.params.episode_index, 10) || 1, function(err, episodeInfo) {
     if (err) {
-      res.sendStatus(err['statusCode']);
+      res.status(('statusCode' in err) ? err['statusCode'] : 500).send(err);
     } else {
       res.json(episodeInfo);
     }

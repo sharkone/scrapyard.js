@@ -36,7 +36,6 @@ function http(url, params, headers, timeout, startTime, callback) {
     gzip:     true,
     headers:  headers,
     qs:       params,
-    time:     true,
     timeout:  timeout,
     url:      url
   };
@@ -44,6 +43,8 @@ function http(url, params, headers, timeout, startTime, callback) {
   request(options, function(err, response, body) {
     if (err) {
       callback(err, null);
+    } else if (response.statusCode != 200) {
+      callback({ statusCode: response.statusCode }, null);
     } else {
       callback(null, body);
     }

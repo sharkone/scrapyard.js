@@ -3,7 +3,17 @@ var querystring = require('querystring');
 var request     = require('request');
 var zlib        = require('zlib');
 
-var cache = new LRU();
+var CACHE_1_MINUTE = 60 * 1000;
+var CACHE_1_HOUR   = 60 * CACHE_1_MINUTE;
+var CACHE_1_DAY    = 24 * CACHE_1_HOUR;
+
+var TIMEOUT_INITIAL = 40000;
+var TIMEOUT_UPDATE  = 5000;
+
+var cache = new LRU({
+  max:    5000,
+  maxAge: CACHE_1_HOUR
+});
 
 function getFullURL(url, params) {
   var queryString = querystring.stringify(params);
@@ -21,25 +31,34 @@ function getDuration(startTime) {
   return duration;
 }
 
-exports.http = function(url, params, headers, timeout, callback) {
+function http(url, params, headers, timeout, startTime, callback) {
+  var options = {
+    gzip:     true,
+    headers:  headers,
+    qs:       params,
+    time:     true,
+    timeout:  timeout,
+    url:      url
+  };
+
+  request(options, function(err, response, body) {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, body);
+    }
+  });
+}
+
+exports.http = function(url, params, headers, callback) {
   var startTime = new Date().getTime();
 
   var key   = getFullURL(url, params);
-  var value = cache.get(key);
-  if (value) {
-    console.log('[HTTP][MEM][' + getDuration(startTime) + 's] ' + getFullURL(url, params));
-    callback(null, zlib.gunzipSync(value).toString());
-  } else {
-    var options = {
-      gzip:     true,
-      headers:  headers,
-      qs:       params,
-      time:     true,
-      timeout:  timeout,
-      url:      url
-    };
+  var value = cache.peek(key);
 
-    request(options, function(err, response, body) {
+  // Value doesn't exist in cache, force update
+  if (!value) {
+    http(url, params, headers, TIMEOUT_INITIAL, startTime, function(err, body) {
       if (err) {
         console.log('[HTTP][ERR][' + getDuration(startTime) + 's] ' + getFullURL(url, params));
         callback(err, null);
@@ -49,11 +68,33 @@ exports.http = function(url, params, headers, timeout, callback) {
         callback(null, body);
       }
     });
+  } else {
+    var getValue = cache.get(key);
+    if (!getValue) {
+      // Value is outdated, try and update it
+      http(url, params, headers, TIMEOUT_UPDATE, startTime, function(err, body) {
+        if (err) {
+          // Failed to update, return previous value
+          console.log('[HTTP][FLB][' + getDuration(startTime) + 's] ' + getFullURL(url, params));
+          cache.set(key, value);
+          callback(null, zlib.gunzipSync(value).toString());
+        } else {
+          // Update cache and return new value
+          console.log('[HTTP][UPD][' + getDuration(startTime) + 's] ' + getFullURL(url, params));
+          cache.set(key, zlib.gzipSync(body));
+          callback(null, body);
+        }
+      });
+    } else {
+      // Value is still in cache
+      console.log('[HTTP][MEM][' + getDuration(startTime) + 's] ' + getFullURL(url, params));
+      callback(null, zlib.gunzipSync(getValue).toString());
+    }
   }
 }
 
-exports.json = function(url, params, headers, timeout, callback) {
-  exports.http(url, params, headers, timeout, function(err, data) {
+exports.json = function(url, params, headers, callback) {
+  exports.http(url, params, headers, function(err, data) {
     if (err) {
       callback(err, null);
     } else {
@@ -66,4 +107,3 @@ exports.json = function(url, params, headers, timeout, callback) {
     }
   });
 }
-

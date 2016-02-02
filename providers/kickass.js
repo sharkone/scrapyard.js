@@ -11,7 +11,7 @@ var KICKASS_URL = 'https://kat.cr'
 // ----------------------------------------------------------------------------
 
 function search(category, query, callback) {
-  network.json(KICKASS_URL + '/json.php', { q: 'category:' + category + ' ' + query, field: 'seeders', order: 'desc' }, null, 0, function(err, data) {
+  network.json(KICKASS_URL + '/json.php', { q: 'category:' + category + ' ' + query, field: 'seeders', order: 'desc' }, null, function(err, data) {
     if (err) {
       callback(err, null);
     } else {

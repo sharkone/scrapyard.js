@@ -8,7 +8,7 @@ var TRAKT_HEADERS = { 'content-type': 'application/json', 'trakt-api-version': '
 // ----------------------------------------------------------------------------
 
 function trakt(page, params, callback) {
-  network.json(TRAKT_URL + page, params, TRAKT_HEADERS, 0, function(err, data) {
+  network.json(TRAKT_URL + page, params, TRAKT_HEADERS, function(err, data) {
     if (err) {
       callback(err, null);
     } else {

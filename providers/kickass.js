@@ -46,8 +46,12 @@ function search(category, query, callback) {
 
 exports.movie = function(movieInfo, callback) {
   search('movies', 'imdb:' + ((movieInfo.imdb_id != null) ? movieInfo.imdb_id.substring(2) : ''), function(err, movieMagnets) {
-    movieMagnets.sort(function(a, b) { return b.seeds - a.seeds; });
-    callback(null, movieMagnets);
+    if (err) {
+      callback(err, null);
+    } else {
+      movieMagnets.sort(function(a, b) { return b.seeds - a.seeds; });
+      callback(null, movieMagnets);
+    }
   });
 }
 
@@ -72,9 +76,13 @@ exports.episode = function(showInfo, seasonIndex, episodeIndex, callback) {
       }
     ],
     function(err, results) {
-      episodeMagnets = mergeMagnetLists(results[0], results[1]);
-      episodeMagnets.sort(function(a, b) { return b.seeds - a.seeds; });
-      callback(null, episodeMagnets);
+      if (err) {
+        callback(err, null);
+      } else {
+        episodeMagnets = mergeMagnetLists(results[0], results[1]);
+        episodeMagnets.sort(function(a, b) { return b.seeds - a.seeds; });
+        callback(null, episodeMagnets);
+      }
     }
   );
 }

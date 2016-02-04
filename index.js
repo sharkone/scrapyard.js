@@ -1,6 +1,4 @@
-if (process.env.IP) {
-  require('newrelic');
-}
+require('newrelic');
 
 var app        = require('express')();
 var bodyParser = require('body-parser');

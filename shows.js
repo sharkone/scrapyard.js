@@ -2,9 +2,8 @@ var async = require('async');
 var merge = require('merge');
 var S     = require('string');
 
-var trakt = require('./trakt');
-
-var kickass = require('./providers/kickass.js');
+var providers = require('./providers');
+var trakt     = require('./trakt');
 
 // ----------------------------------------------------------------------------
 
@@ -118,7 +117,7 @@ function getEpisode(show, seasonIndex, episodeIndex, callback) {
 // ----------------------------------------------------------------------------
 
 function getMagnets(showInfo, seasonIndex, episodeIndex, callback) {
-  kickass.episode(showInfo, seasonIndex, episodeIndex, function(err, episodeMagnetData) {
+  providers.episode(showInfo, seasonIndex, episodeIndex, function(err, episodeMagnetData) {
     if (err) {
       callback(err, null);
     } else {

@@ -2,9 +2,8 @@ var async = require('async');
 var merge = require('merge');
 var S     = require('string');
 
-var trakt = require('./trakt');
-
-var kickass = require('./providers/kickass.js');
+var providers = require('./providers');
+var trakt     = require('./trakt');
 
 // ----------------------------------------------------------------------------
 
@@ -73,11 +72,11 @@ function getInfo(movie, callback) {
 // ----------------------------------------------------------------------------
 
 function getMagnets(movieInfo, callback) {
-  kickass.movie(movieInfo, function(err, movieMagnetData) {
+  providers.movie(movieInfo, function(err, movieMagnets) {
     if (err) {
       callback(err, null);
     } else {
-      callback(null, { magnets: movieMagnetData });
+      callback(null, { magnets: movieMagnets });
     }
   });
 }

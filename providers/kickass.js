@@ -19,7 +19,7 @@ function search(category, query, callback) {
 
       for (var i = 0; i < data.list.length; i++) {
         var magnetInfo = {
-          title: data.list[i].title,
+          title: '[KAT] ' + data.list[i].title,
           size:  data.list[i].size,
           seeds: data.list[i].seeds,
           peers: data.list[i].leechs
@@ -49,7 +49,6 @@ exports.movie = function(movieInfo, callback) {
     if (err) {
       callback(err, null);
     } else {
-      movieMagnets.sort(function(a, b) { return b.seeds - a.seeds; });
       callback(null, movieMagnets);
     }
   });
@@ -80,12 +79,13 @@ exports.episode = function(showInfo, seasonIndex, episodeIndex, callback) {
         callback(err, null);
       } else {
         episodeMagnets = mergeMagnetLists(results[0], results[1]);
-        episodeMagnets.sort(function(a, b) { return b.seeds - a.seeds; });
         callback(null, episodeMagnets);
       }
     }
   );
 }
+
+// ----------------------------------------------------------------------------
 
 function mergeMagnetLists(list1, list2) {
   var toAdd = [];

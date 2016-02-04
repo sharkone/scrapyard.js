@@ -1,19 +1,21 @@
-var LRU         = require('lru-cache')
+var LRU         = require('lru-cache');
 var querystring = require('querystring');
 var request     = require('request');
 var zlib        = require('zlib');
 
-var CACHE_1_MINUTE = 60 * 1000;
-var CACHE_1_HOUR   = 60 * CACHE_1_MINUTE;
-var CACHE_1_DAY    = 24 * CACHE_1_HOUR;
+// ----------------------------------------------------------------------------
 
 var TIMEOUT_INITIAL = 40000;
 var TIMEOUT_UPDATE  = 5000;
 
+// ----------------------------------------------------------------------------
+
 var cache = new LRU({
   max:    5000,
-  maxAge: CACHE_1_HOUR
+  maxAge: 60 * 60 * 1000
 });
+
+// ----------------------------------------------------------------------------
 
 function getFullURL(url, params) {
   var queryString = querystring.stringify(params);
@@ -23,13 +25,17 @@ function getFullURL(url, params) {
   return url + queryString;
 }
 
+// ----------------------------------------------------------------------------
+
 function getDuration(startTime) {
   var duration = ((new Date().getTime() - startTime) / 1000.0).toFixed(1);
-  if (duration < 1.0) {
+  if (duration < 10.0) {
     duration = '0' + duration;
   }
   return duration;
 }
+
+// ----------------------------------------------------------------------------
 
 function http(url, params, headers, timeout, startTime, callback) {
   var options = {
@@ -50,6 +56,8 @@ function http(url, params, headers, timeout, startTime, callback) {
     }
   });
 }
+
+// ----------------------------------------------------------------------------
 
 exports.http = function(url, params, headers, callback) {
   var startTime = new Date().getTime();
@@ -93,6 +101,8 @@ exports.http = function(url, params, headers, callback) {
     }
   }
 }
+
+// ----------------------------------------------------------------------------
 
 exports.json = function(url, params, headers, callback) {
   exports.http(url, params, headers, function(err, data) {

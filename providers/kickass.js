@@ -57,9 +57,9 @@ exports.movie = function(movieInfo, callback) {
 exports.episode = function(showInfo, seasonIndex, episodeIndex, callback) {
   async.parallel(
     [
-      function(callback) {
-        search('tv', util.format('%s season:%d episode:%d', showInfo.title, seasonIndex, episodeIndex), callback);
-      },
+      // function(callback) {
+      //   search('tv', util.format('%s season:%d episode:%d', showInfo.title, seasonIndex, episodeIndex), callback);
+      // },
       function(callback) {
         var season = seasonIndex.toString();
         if (seasonIndex < 10) {

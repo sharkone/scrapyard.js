@@ -69,7 +69,7 @@ exports.http = function(url, params, headers, callback) {
   if (!value) {
     http(url, params, headers, TIMEOUT_INITIAL, startTime, function(err, body) {
       if (err) {
-        console.log('[HTTP][ERR][' + getDuration(startTime) + 's] ' + getFullURL(url, params) + ' (' + err + ')');
+        console.log('[HTTP][ERR][' + getDuration(startTime) + 's] ' + getFullURL(url, params) + ' (' + err.message + ')');
         callback(err, null);
       } else {
         console.log('[HTTP][NET][' + getDuration(startTime) + 's] ' + getFullURL(url, params));
@@ -84,7 +84,7 @@ exports.http = function(url, params, headers, callback) {
       http(url, params, headers, TIMEOUT_UPDATE, startTime, function(err, body) {
         if (err) {
           // Failed to update, return previous value
-          console.log('[HTTP][FLB][' + getDuration(startTime) + 's] ' + getFullURL(url, params) + ' (' + err + ')');
+          console.log('[HTTP][FLB][' + getDuration(startTime) + 's] ' + getFullURL(url, params) + ' (' + err.message + ')');
           cache.set(key, value);
           callback(null, zlib.gunzipSync(value).toString());
         } else {

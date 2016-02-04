@@ -76,7 +76,10 @@ exports.episode = function(showInfo, seasonIndex, episodeIndex, callback) {
       if (err) {
         callback(err, null);
       } else {
-        episodeMagnets = mergeMagnetLists(results[0], results[1]);
+        episodeMagnets = [];
+        for (var i = 0; i < results.length; i++) {
+          episodeMagnets = mergeMagnetLists(episodeMagnets, results[i]);
+        }
         callback(null, episodeMagnets);
       }
     }

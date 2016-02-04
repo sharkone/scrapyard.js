@@ -111,10 +111,10 @@ exports.json = function(url, params, headers, callback) {
     } else {
       try {
         var jsonData = JSON.parse(data)
+        callback(null, jsonData);
       } catch(err) {
         callback(err, null);
       }
-      callback(null, jsonData);
     }
   });
 }

@@ -69,8 +69,8 @@ function scrapeMagnets(magnets, callback) {
     function(magnet, callback) {
       scraper.scrape(magnet.link, function(err, scrapeResults) {
         if (!err) {
-          magnet.seeds = scrapeResults.seeds;
-          magnet.peers = scrapeResults.peers;
+          magnet.seeds = Math.max(scrapeResults.seeds, magnet.seeds);
+          magnet.peers = Math.max(scrapeResults.peers, magnet.peers);
         }
         callback();
       })

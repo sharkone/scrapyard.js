@@ -68,7 +68,7 @@ exports.scrape = function(magnetLink, callback) {
       });
     } else {
       // Value is still in cache
-      console.log('[BTRT][MEM][' + getDuration(startTime) + 's] ' + parsedMagnedLink.dn + ' (S:' + getValue.seeds + ' P:' + getValue.peers + ')');
+      // console.log('[BTRT][MEM][' + getDuration(startTime) + 's] ' + parsedMagnedLink.dn + ' (S:' + getValue.seeds + ' P:' + getValue.peers + ')');
       callback(null, getValue);
     }
   }

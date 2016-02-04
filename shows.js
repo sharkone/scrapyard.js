@@ -109,7 +109,9 @@ function getEpisode(show, seasonIndex, episodeIndex, callback) {
           return;
         }
       }
-      callback('Invalid episode index', null);
+      var error = Error('Invalid episode index');
+      error.statusCode = 404;
+      callback(error, null);
     }
   });
 }

@@ -96,7 +96,7 @@ exports.http = function(url, params, headers, callback) {
       });
     } else {
       // Value is still in cache
-      console.log('[HTTP][MEM][' + getDuration(startTime) + 's] ' + getFullURL(url, params));
+      // console.log('[HTTP][MEM][' + getDuration(startTime) + 's] ' + getFullURL(url, params));
       callback(null, zlib.gunzipSync(getValue).toString());
     }
   }

@@ -11,12 +11,11 @@ var KICKASS_URL = 'https://kat.cr'
 // ----------------------------------------------------------------------------
 
 function search(category, query, callback) {
+  var magnets = [];
   network.json(KICKASS_URL + '/json.php', { q: 'category:' + category + ' ' + query, field: 'seeders', order: 'desc' }, null, function(err, data) {
     if (err) {
-      callback(err, null);
+      callback(null, magnets);
     } else {
-      var magnets = [];
-
       for (var i = 0; i < data.list.length; i++) {
         var magnetInfo = {
           title: '[KAT] ' + data.list[i].title,

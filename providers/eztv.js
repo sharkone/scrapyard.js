@@ -34,12 +34,12 @@ exports.episode = function(showInfo, seasonIndex, episodeIndex, callback) {
                 });
               }
             }
-
             callback(null, magnets);
             return;
           }
         }
       }
+      callback(null, magnets);
     }
   });
 }

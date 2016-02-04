@@ -52,7 +52,6 @@ exports.episode = function(showInfo, seasonIndex, episodeIndex, callback) {
         for (var i = 0; i < results.length; i++) {
           episodeMagnets = mergeMagnetLists(episodeMagnets, results[i]);
         }
-
         scrapeMagnets(episodeMagnets, function(err, scrapedEpisodeMagnets) {
           episodeMagnets = scrapedEpisodeMagnets.filter(function(magnet) { return magnet.seeds > 0; });
           episodeMagnets.sort(function(a, b) { return b.seeds - a.seeds; });

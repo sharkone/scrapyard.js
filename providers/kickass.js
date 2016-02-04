@@ -35,7 +35,6 @@ function search(category, query, callback) {
 
         magnets.push(magnetInfo);
       }
-
       callback(null, magnets);
     }
   });

@@ -3,7 +3,9 @@ require('newrelic');
 var app        = require('express')();
 var bodyParser = require('body-parser');
 
-var movies     = require('./movies');
+var movies     = require('./movies')
+var network    = require('./network');
+var scraper    = require('./scraper');
 var shows      = require('./shows');
 
 // ----------------------------------------------------------------------------
@@ -23,7 +25,11 @@ var server = app.listen(process.env.PORT || 5000, process.env.IP || '0.0.0.0', f
 // ----------------------------------------------------------------------------
 
 app.get('/', function(req, res) {
-  res.json({ version: VERSION });
+  res.json({
+    version: VERSION,
+    network_cache: network.cache.itemCount,
+    scraper_cache: scraper.cache.itemCount,
+  });
 });
 
 // ----------------------------------------------------------------------------

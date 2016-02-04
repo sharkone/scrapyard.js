@@ -4,7 +4,7 @@ var parseTorrent      = require('parse-torrent');
 
 // ----------------------------------------------------------------------------
 
-var cache = new LRU({
+exports.cache = new LRU({
   max:    5000,
   maxAge: 60 * 60 * 1000
 });
@@ -35,7 +35,7 @@ exports.scrape = function(magnetLink, callback) {
   var parsedMagnedLink = parseTorrent(magnetLink);
 
   var key   = parsedMagnedLink.infoHash;
-  var value = cache.peek(key);
+  var value = exports.cache.peek(key);
 
   // Value doesn't exist in cache, force update
   if (!value) {
@@ -45,24 +45,24 @@ exports.scrape = function(magnetLink, callback) {
         callback(err, null);
       } else {
         console.log('[BTRT][NET][' + getDuration(startTime) + 's] ' + parsedMagnedLink.dn + ' (S:' + results.seeds + ' P:' + results.peers + ')');
-        cache.set(key, results);
+        exports.cache.set(key, results);
         callback(null, results);
       }
     });
   } else {
-    var getValue = cache.get(key);
+    var getValue = exports.cache.get(key);
     if (!getValue) {
       // Value is outdated, try and update it
       scrape(magnetLink, function(err, results) {
         if (err) {
           // Failed to update, return previous value
           console.log('[BTRT][FLB][' + getDuration(startTime) + 's] ' + parsedMagnedLink.dn + ' (S:' + value.seeds + ' P:' + value.peers + ')');
-          cache.set(key, value);
+          exports.cache.set(key, value);
           callback(null, value);
         } else {
           // Update cache and return new value
           console.log('[BTRT][NET][' + getDuration(startTime) + 's] ' + parsedMagnedLink.dn + ' (S:' + results.seeds + ' P:' + results.peers + ')');
-          cache.set(key, results);
+          exports.cache.set(key, results);
           callback(null, results);
         }
       });

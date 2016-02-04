@@ -10,7 +10,7 @@ var TIMEOUT_UPDATE  = 5000;
 
 // ----------------------------------------------------------------------------
 
-var cache = new LRU({
+exports.cache = new LRU({
   max:    5000,
   maxAge: 60 * 60 * 1000
 });
@@ -63,7 +63,7 @@ exports.http = function(url, params, headers, callback) {
   var startTime = new Date().getTime();
 
   var key   = getFullURL(url, params);
-  var value = cache.peek(key);
+  var value = exports.cache.peek(key);
 
   // Value doesn't exist in cache, force update
   if (!value) {
@@ -73,24 +73,24 @@ exports.http = function(url, params, headers, callback) {
         callback(err, null);
       } else {
         console.log('[HTTP][NET][' + getDuration(startTime) + 's] ' + getFullURL(url, params));
-        cache.set(key, zlib.gzipSync(body));
+        exports.cache.set(key, zlib.gzipSync(body));
         callback(null, body);
       }
     });
   } else {
-    var getValue = cache.get(key);
+    var getValue = exports.cache.get(key);
     if (!getValue) {
       // Value is outdated, try and update it
       http(url, params, headers, TIMEOUT_UPDATE, startTime, function(err, body) {
         if (err) {
           // Failed to update, return previous value
           console.log('[HTTP][FLB][' + getDuration(startTime) + 's] ' + getFullURL(url, params) + ' (' + err.message + ')');
-          cache.set(key, value);
+          exports.cache.set(key, value);
           callback(null, zlib.gunzipSync(value).toString());
         } else {
           // Update cache and return new value
           console.log('[HTTP][UPD][' + getDuration(startTime) + 's] ' + getFullURL(url, params));
-          cache.set(key, zlib.gzipSync(body));
+          exports.cache.set(key, zlib.gzipSync(body));
           callback(null, body);
         }
       });

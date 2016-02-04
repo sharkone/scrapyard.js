@@ -16,7 +16,7 @@ exports.episode = function(showInfo, seasonIndex, episodeIndex, callback) {
     } else {
       var magnets = [];
 
-      if ('episodes' in data) {
+      if (data && 'episodes' in data) {
         for (var i = 0; i < data.episodes.length; i++) {
           if (data.episodes[i].season == seasonIndex && data.episodes[i].episode == episodeIndex) {
             for (var key in data.episodes[i].torrents) {

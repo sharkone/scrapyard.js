@@ -29,8 +29,8 @@ exports.episode = function(showInfo, seasonIndex, episodeIndex, callback) {
                   title: parsedMagnetLink.dn,
                   link:  magnetLink,
                   size:  0,
-                  seeds: data.episodes[i].torrents[key].seeds,
-                  peers: data.episodes[i].torrents[key].peers
+                  seeds: -1,
+                  peers: -1
                 });
               }
             }

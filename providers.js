@@ -67,13 +67,17 @@ exports.episode = function(showInfo, seasonIndex, episodeIndex, callback) {
 function scrapeMagnets(magnets, callback) {
   async.each(magnets,
     function(magnet, callback) {
-      scraper.scrape(magnet.link, function(err, scrapeResults) {
-        if (!err) {
-          magnet.seeds = Math.max(scrapeResults.seeds, magnet.seeds);
-          magnet.peers = Math.max(scrapeResults.peers, magnet.peers);
-        }
+      if (magnet.seeds == -1 && magnet.peers == -1) {
+        scraper.scrape(magnet.link, function(err, scrapeResults) {
+          if (!err) {
+            magnet.seeds = scrapeResults.seeds;
+            magnet.peers = scrapeResults.peers;
+          }
+          callback();
+        });
+      } else {
         callback();
-      })
+      }
     },
     function(err) {
       callback(null, magnets);

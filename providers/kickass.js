@@ -18,10 +18,11 @@ function search(category, query, callback) {
     } else {
       for (var i = 0; i < data.list.length; i++) {
         var magnetInfo = {
-          title: '[KAT] ' + data.list[i].title,
-          size:  data.list[i].size,
-          seeds: data.list[i].seeds,
-          peers: data.list[i].leechs
+          title:  data.list[i].title,
+          source: 'KickassTorrents',
+          size:   data.list[i].size,
+          seeds:  data.list[i].seeds,
+          peers:  data.list[i].leechs
         };
 
         magnetInfo.link = magnet.encode({

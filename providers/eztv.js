@@ -21,16 +21,15 @@ exports.episode = function(showInfo, seasonIndex, episodeIndex, callback) {
             for (var key in data.episodes[i].torrents) {
               var magnetLink       = data.episodes[i].torrents[key].url;
               var parsedMagnetLink = parseTorrent(magnetLink);
-              parsedMagnetLink.dn  = parsedMagnetLink.name = '[EZTV] ' + parsedMagnetLink.dn;
-              magnetLink           = parseTorrent.toMagnetURI(parsedMagnetLink);
 
               if (!magnets.find(function(element, index, array) { return parseTorrent(element.link).infoHash == parsedMagnetLink.infoHash; })) {
                 magnets.push({
-                  title: parsedMagnetLink.dn,
-                  link:  magnetLink,
-                  size:  0,
-                  seeds: -1,
-                  peers: -1
+                  title:  parsedMagnetLink.dn,
+                  link:   magnetLink,
+                  source: 'EZTV',
+                  size:   0,
+                  seeds:  -1,
+                  peers:  -1
                 });
               }
             }

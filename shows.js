@@ -1,6 +1,7 @@
-var async = require('async');
-var merge = require('merge');
-var S     = require('string');
+var async  = require('async');
+var merge  = require('merge');
+var moment = require('moment');
+var S      = require('string');
 
 var providers = require('./providers');
 var trakt     = require('./trakt');
@@ -74,7 +75,7 @@ function getSeason(show, seasonIndex, callback) {
         } else {
           var showSeasonInfo = [];
           for (var i = 0; i < showSeasonInfoData.length; i++) {
-            if (showSeasonInfoData[i].first_aired) {
+            if (showSeasonInfoData[i].first_aired && moment(showSeasonInfoData[i].first_aired).isBefore(moment())) {
               showSeasonInfo.push({
                 show_title:     showInfo.title,
                 season_index:   showSeasonInfoData[i].season,

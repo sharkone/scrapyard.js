@@ -25,8 +25,8 @@ exports.episode = function(showInfo, seasonIndex, episodeIndex, callback) {
               if (!magnets.find(function(element, index, array) { return parseTorrent(element.link).infoHash == parsedMagnetLink.infoHash; })) {
                 magnets.push({
                   title:  parsedMagnetLink.dn,
-                  link:   magnetLink,
                   source: 'EZTV',
+                  link:   magnetLink,
                   size:   0,
                   seeds:  -1,
                   peers:  -1

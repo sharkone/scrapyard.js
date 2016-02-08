@@ -24,6 +24,7 @@
     "lru-cache": "^4.0.0",
     "magnet-uri": "^5.1.2",
     "merge": "^1.2.0",
+    "moment": "^2.11.2",
     "newrelic": "^1.24.1",
     "parse-torrent": "^5.7.0",
     "request": "^2.69.0",

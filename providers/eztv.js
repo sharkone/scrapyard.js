@@ -1,11 +1,12 @@
 var async        = require('async');
+var magnet       = require('magnet-uri');
 var parseTorrent = require('parse-torrent');
 
 var network = require('../network');
 
 // ----------------------------------------------------------------------------
 
-EZTV_URL = 'https://www.popcorntime.ws/api/eztv'
+EZTV_URL = 'https://api-fetch.website/tv'
 
 // ----------------------------------------------------------------------------
 
@@ -23,18 +24,30 @@ exports.episode = function(showInfo, seasonIndex, episodeIndex, callback) {
               var parsedMagnetLink = parseTorrent(magnetLink);
 
               if (!magnets.find(function(element, index, array) { return parseTorrent(element.link).infoHash == parsedMagnetLink.infoHash; })) {
-                magnets.push({
+                var magnetInfo = {
                   title:  parsedMagnetLink.dn,
                   source: 'EZTV',
                   link:   magnetLink,
                   size:   0,
                   seeds:  -1,
                   peers:  -1
+                };
+
+                magnetInfo.link = magnet.encode({
+                  dn: magnetInfo.title,
+                  xt: [ 'urn:btih:' + parsedMagnetLink.infoHash ],
+                  tr: [
+                        'udp://tracker.internetwarriors.net:1337',
+                        'udp://tracker.coppersurfer.tk:6969',
+                        'udp://open.demonii.com:1337',
+                        'udp://tracker.leechers-paradise.org:6969',
+                        'udp://tracker.openbittorrent.com:80'
+                      ]
                 });
+
+                magnets.push(magnetInfo);
               }
             }
-            callback(null, magnets);
-            return;
           }
         }
       }

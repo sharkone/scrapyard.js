@@ -28,9 +28,12 @@ function search(category, query, callback) {
         magnetInfo.link = magnet.encode({
           dn: magnetInfo.title,
           xt: [ 'urn:btih:' + data.list[i].hash ],
-          tr: [ 'udp://tracker.openbittorrent.com:80',
+          tr: [
+                'udp://tracker.internetwarriors.net:1337',
+                'udp://tracker.coppersurfer.tk:6969',
                 'udp://open.demonii.com:1337',
-                'udp://tracker.leechers-paradise.org:6969'
+                'udp://tracker.leechers-paradise.org:6969',
+                'udp://tracker.openbittorrent.com:80'
               ]
         });
 

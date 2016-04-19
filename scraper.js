@@ -16,10 +16,17 @@ function scrape(magnetLink, callback) {
   var parsedMagnedLink = parseTorrent(magnetLink);
   var client           = new bittorrentTracker(new Buffer('01234567890123456789'), 6881, parsedMagnedLink);
 
-  client.on('error', function(err) {
-    client.destroy();
-    callback(err, null);
-  });
+  // client.on('error', function(err) {
+  //   console.log(err);
+  //   client.destroy();
+  //   callback(err, null);
+  // });
+
+  // client.on('warning', function(err) {
+  //   console.log(err);
+  //   client.destroy();
+  //   callback(err, null);
+  // });
 
   client.on('scrape', function(data) {
     client.destroy();

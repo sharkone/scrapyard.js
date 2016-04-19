@@ -23,29 +23,31 @@ exports.episode = function(showInfo, seasonIndex, episodeIndex, callback) {
               var magnetLink       = data.episodes[i].torrents[key].url;
               var parsedMagnetLink = parseTorrent(magnetLink);
 
-              if (!magnets.find(function(element, index, array) { return parseTorrent(element.link).infoHash == parsedMagnetLink.infoHash; })) {
-                var magnetInfo = {
-                  title:  parsedMagnetLink.dn,
-                  source: 'EZTV',
-                  link:   magnetLink,
-                  size:   0,
-                  seeds:  -1,
-                  peers:  -1
-                };
+              if (parsedMagnetLink.dn) {
+                if (!magnets.find(function(element, index, array) { return parseTorrent(element.link).infoHash == parsedMagnetLink.infoHash; })) {
+                  var magnetInfo = {
+                    title:  parsedMagnetLink.dn,
+                    source: 'EZTV',
+                    link:   magnetLink,
+                    size:   0,
+                    seeds:  -1,
+                    peers:  -1
+                  };
 
-                magnetInfo.link = magnet.encode({
-                  dn: magnetInfo.title,
-                  xt: [ 'urn:btih:' + parsedMagnetLink.infoHash ],
-                  tr: [
-                        'udp://tracker.internetwarriors.net:1337',
-                        'udp://tracker.coppersurfer.tk:6969',
-                        'udp://open.demonii.com:1337',
-                        'udp://tracker.leechers-paradise.org:6969',
-                        'udp://tracker.openbittorrent.com:80'
-                      ]
-                });
+                  magnetInfo.link = magnet.encode({
+                    dn: magnetInfo.title,
+                    xt: [ 'urn:btih:' + parsedMagnetLink.infoHash ],
+                    tr: [
+                          'udp://tracker.internetwarriors.net:1337',
+                          'udp://tracker.coppersurfer.tk:6969',
+                          'udp://open.demonii.com:1337',
+                          'udp://tracker.leechers-paradise.org:6969',
+                          'udp://tracker.openbittorrent.com:80'
+                        ]
+                  });
 
-                magnets.push(magnetInfo);
+                  magnets.push(magnetInfo);
+                }
               }
             }
           }

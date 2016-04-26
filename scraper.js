@@ -14,7 +14,11 @@ exports.cache = new LRU({
 
 function scrape(magnetLink, callback) {
   var parsedMagnedLink = parseTorrent(magnetLink);
-  var client           = new bittorrentTracker(new Buffer('01234567890123456789'), 6881, parsedMagnedLink);
+  if (!parsedMagnedLink) {
+    callback('Invalid magnet', null);
+    return;
+  }
+  var client = new bittorrentTracker(new Buffer('01234567890123456789'), 6881, parsedMagnedLink);
 
   // client.on('error', function(err) {
   //   console.log(err);

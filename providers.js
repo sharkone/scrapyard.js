@@ -67,7 +67,7 @@ exports.episode = function(showInfo, seasonIndex, episodeIndex, callback) {
 function scrapeMagnets(magnets, callback) {
   async.each(magnets,
     function(magnet, callback) {
-      if (magnet.seeds == -1 && magnet.peers == -1) {
+      if (magnet.seeds == -1 && magnet.peers == -1 && magnet.link) {
         scraper.scrape(magnet.link, function(err, scrapeResults) {
           if (!err) {
             magnet.seeds = scrapeResults.seeds;

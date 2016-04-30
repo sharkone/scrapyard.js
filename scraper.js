@@ -13,31 +13,31 @@ exports.cache = new LRU({
 // ----------------------------------------------------------------------------
 
 function scrape(magnetLink, callback) {
-  var parsedMagnedLink = parseTorrent(magnetLink);
-  if (!parsedMagnedLink) {
-    callback('Invalid magnet', null);
-    return;
+  try {
+    var client = new bittorrentTracker(new Buffer('01234567890123456789'), 6881, parseTorrent(magnetLink));
+
+    // client.on('error', function(err) {
+    //   console.log(err);
+    //   client.destroy();
+    //   callback(err, null);
+    // });
+
+    // client.on('warning', function(err) {
+    //   console.log(err);
+    //   client.destroy();
+    //   callback(err, null);
+    // });
+
+    client.on('scrape', function(data) {
+      client.destroy();
+      callback(null, { seeds: data.complete, peers: data.incomplete });
+    });
+
+    client.scrape();
+  } catch (err)
+  {
+    callback(err, null);
   }
-  var client = new bittorrentTracker(new Buffer('01234567890123456789'), 6881, parsedMagnedLink);
-
-  // client.on('error', function(err) {
-  //   console.log(err);
-  //   client.destroy();
-  //   callback(err, null);
-  // });
-
-  // client.on('warning', function(err) {
-  //   console.log(err);
-  //   client.destroy();
-  //   callback(err, null);
-  // });
-
-  client.on('scrape', function(data) {
-    client.destroy();
-    callback(null, { seeds: data.complete, peers: data.incomplete });
-  });
-
-  client.scrape();
 }
 
 // ----------------------------------------------------------------------------

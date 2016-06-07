@@ -23,7 +23,7 @@ function getInfo(show, callback) {
         thumb:          showInfoData.images.poster.full,
         art:            showInfoData.images.fanart.full,
         runtime:        showInfoData.runtime * 60 * 1000,
-        genres:         showInfoData.genres.map(function(x) { return S(x).capitalize().s; }),
+        genres:         (showInfoData.genres) ? showInfoData.genres.map(function(x) { return S(x).capitalize().s; }) : [],
         rating:         showInfoData.rating,
         first_aired:    showInfoData.first_aired,
         certification:  showInfoData.certification

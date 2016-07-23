@@ -6,7 +6,7 @@ var network = require('../network');
 
 // ----------------------------------------------------------------------------
 
-var KICKASS_URL = 'https://kat.cr'
+var KICKASS_URL = 'https://kickasstorrents.website'
 
 // ----------------------------------------------------------------------------
 

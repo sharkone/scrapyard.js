@@ -1,8 +1,7 @@
 var async = require('async');
 
-var scraper = require('./scraper');
-var eztv    = require('./providers/eztv');
-var kickass = require('./providers/kickass');
+var scraper     = require('./scraper');
+var popcorntime = require('./providers/popcorntime');
 
 // ----------------------------------------------------------------------------
 
@@ -10,7 +9,7 @@ exports.movie = function(movieInfo, callback) {
   async.parallel(
     [
       function(callback) {
-        kickass.movie(movieInfo, callback);
+        popcorntime.movie(movieInfo, callback);
       }
     ],
     function(err, results) {
@@ -38,10 +37,7 @@ exports.episode = function(showInfo, seasonIndex, episodeIndex, callback) {
   async.parallel(
     [
       function(callback) {
-        eztv.episode(showInfo, seasonIndex, episodeIndex, callback);
-      },
-      function(callback) {
-        kickass.episode(showInfo, seasonIndex, episodeIndex, callback);
+        popcorntime.episode(showInfo, seasonIndex, episodeIndex, callback);
       }
     ],
     function(err, results) {

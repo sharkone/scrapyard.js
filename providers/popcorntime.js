@@ -59,38 +59,61 @@ exports.episode = function(showInfo, seasonIndex, episodeIndex, callback) {
     if (err) {
       callback(null, magnets);
     } else {
+      var torrents = [];
+
       if (data && 'episodes' in data) {
         for (var i = 0; i < data.episodes.length; i++) {
           if (data.episodes[i].season == seasonIndex && data.episodes[i].episode == episodeIndex) {
-            for (var key in data.episodes[i].torrents) {
-              var magnetLink       = data.episodes[i].torrents[key].url;
-              var parsedMagnetLink = parseTorrent(magnetLink);
-
-              if (parsedMagnetLink.dn) {
-                if (!magnets.find(function(element, index, array) { return parseTorrent(element.link).infoHash == parsedMagnetLink.infoHash; })) {
-                  var magnetInfo = {
-                    title:  parsedMagnetLink.dn,
-                    source: data.episodes[i].torrents[key].provider,
-                    link:   magnetLink,
-                    size:   0,
-                    seeds:  -1,
-                    peers:  -1
-                  };
-
-                  magnetInfo.link = magnet.encode({
-                    dn: magnetInfo.title,
-                    xt: [ 'urn:btih:' + parsedMagnetLink.infoHash ],
-                    tr: parsedMagnetLink.tr
-                  });
-
-                  magnets.push(magnetInfo);
-                }
-              }
-            }
+            torrents = data.episodes[i].torrents;
+            break;
           }
         }
       }
-      callback(null, magnets);
+
+      async.map(torrents,
+                function(item, callback) {
+                  if (!item.url) {
+                    callback(null, null);
+                  } else {
+                    parseTorrent.remote(item.url, function(err, parsedTorrent) {
+                      if (!err) {
+                        item.url = parseTorrent.toMagnetURI(parsedTorrent);
+                      }
+                      callback(null, null);
+                    });
+                  }
+                },
+                function(err, results) {
+                  for (var key in torrents) {
+                    var magnetLink = torrents[key].url;
+                    if (magnetLink) {
+                      var parsedMagnetLink = parseTorrent(magnetLink);
+
+                      if (parsedMagnetLink.dn) {
+                        if (!magnets.find(function(element, index, array) { return parseTorrent(element.link).infoHash == parsedMagnetLink.infoHash; })) {
+                          var magnetInfo = {
+                            title:  parsedMagnetLink.dn,
+                            source: torrents[key].provider,
+                            link:   magnetLink,
+                            size:   0,
+                            seeds:  -1,
+                            peers:  -1
+                          };
+
+                          magnetInfo.link = magnet.encode({
+                            dn: magnetInfo.title,
+                            xt: [ 'urn:btih:' + parsedMagnetLink.infoHash ],
+                            tr: parsedMagnetLink.tr
+                          });
+
+                          magnets.push(magnetInfo);
+                        }
+                      }
+                    }
+                  }
+
+                  callback(null, magnets);
+                });
     }
   });
 }

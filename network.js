@@ -38,7 +38,7 @@ function getDuration(startTime) {
 
 // ----------------------------------------------------------------------------
 
-function http(url, params, headers, timeout, startTime, callback) {
+function http(url, params, headers, binary, timeout, startTime, callback) {
   var options = {
     gzip:     true,
     headers:  headers,
@@ -46,6 +46,10 @@ function http(url, params, headers, timeout, startTime, callback) {
     timeout:  timeout,
     url:      url
   };
+
+  if (binary) {
+    options.encoding = null;
+  }
 
   request(options, function(err, response, body) {
     if (err) {
@@ -60,7 +64,7 @@ function http(url, params, headers, timeout, startTime, callback) {
 
 // ----------------------------------------------------------------------------
 
-exports.http = function(url, params, headers, callback) {
+exports.http = function(url, params, headers, binary, callback) {
   var startTime = new Date().getTime();
 
   var key   = getFullURL(url, params);
@@ -68,7 +72,7 @@ exports.http = function(url, params, headers, callback) {
 
   // Value doesn't exist in cache, force update
   if (!value) {
-    http(url, params, headers, TIMEOUT_INITIAL, startTime, function(err, body) {
+    http(url, params, headers, binary, TIMEOUT_INITIAL, startTime, function(err, body) {
       if (err) {
         console.log('[HTTP][ERR][' + getDuration(startTime) + 's] ' + getFullURL(url, params) + ' (' + err.message + ')');
         callback(err, null);
@@ -82,7 +86,7 @@ exports.http = function(url, params, headers, callback) {
     var getValue = exports.cache.get(key);
     if (!getValue) {
       // Value is outdated, try and update it
-      http(url, params, headers, TIMEOUT_UPDATE, startTime, function(err, body) {
+      http(url, params, headers, binary, TIMEOUT_UPDATE, startTime, function(err, body) {
         if (err) {
           // Failed to update, return previous value
           console.log('[HTTP][FLB][' + getDuration(startTime) + 's] ' + getFullURL(url, params) + ' (' + err.message + ')');
@@ -106,7 +110,7 @@ exports.http = function(url, params, headers, callback) {
 // ----------------------------------------------------------------------------
 
 exports.json = function(url, params, headers, callback) {
-  exports.http(url, params, headers, function(err, data) {
+  exports.http(url, params, headers, false, function(err, data) {
     if (err) {
       callback(err, null);
     } else {

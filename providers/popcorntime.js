@@ -75,12 +75,18 @@ exports.episode = function(showInfo, seasonIndex, episodeIndex, callback) {
                   if (!item.url) {
                     callback(null, null);
                   } else {
-                    parseTorrent.remote(item.url, function(err, parsedTorrent) {
-                      if (!err) {
-                        item.url = parseTorrent.toMagnetURI(parsedTorrent);
-                      }
+                    if (!item.url.startsWith('http')) {
                       callback(null, null);
-                    });
+                    } else {
+                      network.http(item.url, null, null, true, function(err, data) {
+                        parseTorrent.remote(data, function(err, parsedTorrent) {
+                          if (!err) {
+                            item.url = parseTorrent.toMagnetURI(parsedTorrent);
+                          }
+                          callback(null, null);
+                        });
+                      });
+                    }
                   }
                 },
                 function(err, results) {

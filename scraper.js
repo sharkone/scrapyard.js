@@ -16,26 +16,19 @@ function scrape(magnetLink, callback) {
   try {
     var client = new bittorrentTracker(new Buffer('01234567890123456789'), 6881, parseTorrent(magnetLink));
 
-    // client.on('error', function(err) {
-    //   console.log(err);
-    //   client.destroy();
-    //   callback(err, null);
-    // });
-
-    // client.on('warning', function(err) {
-    //   console.log(err);
-    //   client.destroy();
-    //   callback(err, null);
-    // });
+    var timeout = setTimeout(function() {
+      client.destroy();
+      callback('error', null);
+    }, 5000);
 
     client.on('scrape', function(data) {
+      clearTimeout(timeout);
       client.destroy();
       callback(null, { seeds: data.complete, peers: data.incomplete });
     });
 
     client.scrape();
-  } catch (err)
-  {
+  } catch (err) {
     callback(err, null);
   }
 }

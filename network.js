@@ -91,7 +91,12 @@ exports.http = function(url, params, headers, binary, callback) {
           // Failed to update, return previous value
           console.log('[HTTP][FLB][' + getDuration(startTime) + 's] ' + getFullURL(url, params) + ' (' + err.message + ')');
           exports.cache.set(key, value);
-          callback(null, zlib.gunzipSync(value).toString());
+
+          value = zlib.gunzipSync(value);
+          if (!binary) {
+            value = value.toString();
+          }
+          callback(null, value);
         } else {
           // Update cache and return new value
           console.log('[HTTP][UPD][' + getDuration(startTime) + 's] ' + getFullURL(url, params));
@@ -102,7 +107,12 @@ exports.http = function(url, params, headers, binary, callback) {
     } else {
       // Value is still in cache
       // console.log('[HTTP][MEM][' + getDuration(startTime) + 's] ' + getFullURL(url, params));
-      callback(null, zlib.gunzipSync(getValue).toString());
+
+      getValue = zlib.gunzipSync(getValue);
+      if (!binary) {
+        getValue = getValue.toString();
+      }
+      callback(null, getValue);
     }
   }
 }

@@ -30,8 +30,8 @@ exports.movie = function(movieInfo, callback) {
                   source: data.torrents[lang][key].provider,
                   link:   magnetLink,
                   size:   data.torrents[lang][key].size,
-                  seeds:  -1,
-                  peers:  -1
+                  seeds:  (data.torrents[lang][key].seed > 0) ? data.torrents[lang][key].seed : -1,
+                  peers:  (data.torrents[lang][key].peer > 0) ? data.torrents[lang][key].peer : -1,
                 };
 
                 magnetInfo.link = magnet.encode({
@@ -103,8 +103,8 @@ exports.episode = function(showInfo, seasonIndex, episodeIndex, callback) {
                               source: torrents[key].provider,
                               link:   magnetLink,
                               size:   0,
-                              seeds:  -1,
-                              peers:  -1
+                              seeds:  (torrents[key].seeds > 0) ? torrents[key].seeds : -1,
+                              peers:  (torrents[key].peers > 0) ? torrents[key].peers : -1
                             };
 
                             magnetInfo.link = magnet.encode({

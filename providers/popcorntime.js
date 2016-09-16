@@ -93,27 +93,31 @@ exports.episode = function(showInfo, seasonIndex, episodeIndex, callback) {
                   for (var key in torrents) {
                     var magnetLink = torrents[key].url;
                     if (magnetLink) {
-                      var parsedMagnetLink = parseTorrent(magnetLink);
+                      try {
+                        var parsedMagnetLink = parseTorrent(magnetLink);
 
-                      if (parsedMagnetLink.dn) {
-                        if (!magnets.find(function(element, index, array) { return parseTorrent(element.link).infoHash == parsedMagnetLink.infoHash; })) {
-                          var magnetInfo = {
-                            title:  parsedMagnetLink.dn,
-                            source: torrents[key].provider,
-                            link:   magnetLink,
-                            size:   0,
-                            seeds:  -1,
-                            peers:  -1
-                          };
+                        if (parsedMagnetLink.dn) {
+                          if (!magnets.find(function(element, index, array) { return parseTorrent(element.link).infoHash == parsedMagnetLink.infoHash; })) {
+                            var magnetInfo = {
+                              title:  parsedMagnetLink.dn,
+                              source: torrents[key].provider,
+                              link:   magnetLink,
+                              size:   0,
+                              seeds:  -1,
+                              peers:  -1
+                            };
 
-                          magnetInfo.link = magnet.encode({
-                            dn: magnetInfo.title,
-                            xt: [ 'urn:btih:' + parsedMagnetLink.infoHash ],
-                            tr: parsedMagnetLink.tr
-                          });
+                            magnetInfo.link = magnet.encode({
+                              dn: magnetInfo.title,
+                              xt: [ 'urn:btih:' + parsedMagnetLink.infoHash ],
+                              tr: parsedMagnetLink.tr
+                            });
 
-                          magnets.push(magnetInfo);
+                            magnets.push(magnetInfo);
+                          }
                         }
+                      } catch(err) {
+                        // Ignore invalid magnet
                       }
                     }
                   }
